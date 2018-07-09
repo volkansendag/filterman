@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>CuteDev FilterManager Demo</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2018.2.620/styles/kendo.common-material.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2018.2.620/styles/kendo.material.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2018.2.620/styles/kendo.material.mobile.min.css" />
+
+    <script src="https://kendo.cdn.telerik.com/2018.2.620/js/jquery.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2018.2.620/js/kendo.all.min.js"></script>
+</head>
+<body>
+
+    <div id="grid"></div>
+
+    <script>
+        $(document).ready(function () {
+
+            postArgs = new Object();
+            postArgs.supplierName = "test";
+            postData = JSON.stringify(postArgs);
+
+            $("#grid").kendoGrid({
+                dataSource: {
+                    transport: {
+                        read: {
+                            type: "POST",
+                            url: "TestService.asmx/List",
+                            contentType: "application/json; charset=utf-8"
+                        },
+                        update: {
+                            type: "POST",
+                            url: "TestService.asmx/Update",
+                            contentType: "application/json; charset=utf-8"
+                        },
+                        create: {
+                            type: "POST",
+                            url: "TestService.asmx/Add",
+                            contentType: "application/json; charset=utf-8"
+                        },
+                        destroy: {
+                            type: "POST",
+                            url: "TestService.asmx/Delete",
+                            contentType: "application/json; charset=utf-8"
+                        },
+                        parameterMap: function (options, operation) {
+                            return JSON.stringify({ prms: options });
+                        }
+                    },
+                    schema: {
+                        data: function (response) {
+                            return response.d.Values || response.d.Value;
+                        },
+                        model: {
+                            id: "Id",
+                            fields: {
+                                Id: { type: "number", editable: false },
+                                Name: { type: "string" }
+                            }
+                        }
+                    },
+                    pageSize: 20,
+                    serverPaging: true,
+                    serverFiltering: true,
+                    serverSorting: true,
+                },
+                height: 550,
+                filterable: {
+                    mode: "row"
+                },
+                editable: "inline",
+                pageable: {
+                    refresh: true,
+                },
+                toolbar: ["create"],
+                columns: [
+                    { field: "Id", width: 100 },
+                    { field: "Name", width: 350, title: "Name" },
+                    { command: ["edit", "destroy"] }
+                ]
+            });
+        });
+    </script>
+
+</body>
+</html>
